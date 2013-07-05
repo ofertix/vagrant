@@ -72,16 +72,16 @@ mysql::grant { 'ofertix2':
 
 class php-setup {
 
-    $php = ["php-fpm", "php-cli", "php-devel", "php-gd", "php-mcrypt", "php-pecl-xdebug", "php-mysql", "php-pecl-memcache", "php-pecl-memcached",  "php-intl", "php-tidy", "php-imap", "php-pecl-imagick", "php-pecl-apc", "php-redis", "php-domxml-php4-php5"]
+    $php = ["php-fpm", "php-cli", "php-devel", "php-gd", "php-mcrypt", "php-pecl-xdebug", "php-mysql", "php-pecl-memcache", "php-pecl-memcached",  "php-intl", "php-tidy", "php-imap", "php-pecl-imagick", "php-pecl-apc", "php-pecl-redis", "php-domxml-php4-php5"]
 
-    package { "mongodb":
-        ensure => present,
-        require => Package[$php],
-    }
-    package { "mongodb-server":
-        ensure => present,
-        require => Package[$php],
-    }
+#    package { "mongodb":
+#        ensure => present,
+#        require => Package[$php],
+#    }
+#    package { "mongodb-server":
+#        ensure => present,
+#        require => Package[$php],
+#    }
 
     package { $php:
         notify => Service['php-fpm'],
@@ -104,13 +104,13 @@ class php-setup {
         require => Package[$php],
     }
 
-    exec { 'pecl install mongo':
-        notify => Service["php-fpm"],
-        command => '/usr/bin/pecl install --force mongo',
-        logoutput => "on_failure",
-        require => Package[$php],
-        before => [File['/etc/php.ini'], File['/etc/php-fpm.conf'], File['/etc/php-fpm.d/www.conf']],
-        unless => "/usr/bin/php -m | grep mongo",
+#    exec { 'pecl install mongo':
+#        notify => Service["php-fpm"],
+#        command => '/usr/bin/pecl install --force mongo',
+#        logoutput => "on_failure",
+#        require => Package[$php],
+#        before => [File['/etc/php.ini'], File['/etc/php-fpm.conf'], File['/etc/php-fpm.d/www.conf']],
+#        unless => "/usr/bin/php -m | grep mongo",
     }
 
     file { '/etc/php.ini':
@@ -147,10 +147,10 @@ class php-setup {
         require => Package["php-fpm"],
     }
 
-    service { "mongod":
-        ensure => running,
-        require => Package["mongodb-server"],
-    }
+#    service { "mongod":
+#        ensure => running,
+#        require => Package["mongodb-server"],
+#    }
 }
 
 class redis {
