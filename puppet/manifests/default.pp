@@ -3,16 +3,10 @@ Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
 
 class dev-packages {
 
-    $devPackages = [ "vim-enhanced", "curl", "git", "nodejs", "npm", "java-1.7.0-openjdk", "make", "diffutils", "man", "policycoreutils" ]
+    $devPackages = [ "vim-enhanced", "curl", "git", "java-1.7.0-openjdk", "make", "diffutils", "man", "policycoreutils" ]
     package { $devPackages:
         ensure => "installed",
     }
-
-    exec { 'install less using npm':
-        command => 'npm install less -g',
-        require => Package["npm"],
-    }
-
 }
 
 class nginx-setup {
@@ -111,7 +105,7 @@ class php-setup {
 #        require => Package[$php],
 #        before => [File['/etc/php.ini'], File['/etc/php-fpm.conf'], File['/etc/php-fpm.d/www.conf']],
 #        unless => "/usr/bin/php -m | grep mongo",
-    }
+#    }
 
     file { '/etc/php.ini':
         owner  => root,
@@ -163,19 +157,19 @@ class redis {
     }
 }
 
-class composer {
-    exec { 'install composer php dependency management':
-        command => 'curl -s http://getcomposer.org/installer | php -- --install-dir=/usr/bin && mv /usr/bin/composer.phar /usr/bin/composer',
-        creates => '/usr/bin/composer',
-        require => [Package['php-cli'], Package['curl']],
-    }
-}
+#class composer {
+#    exec { 'install composer php dependency management':
+#        command => 'curl -s http://getcomposer.org/installer | php -- --install-dir=/usr/bin && mv /usr/bin/composer.phar /usr/bin/#composer',
+#        creates => '/usr/bin/composer',
+#        require => [Package['php-cli'], Package['curl']],
+#    }
+#}
 
-class memcached {
-    package { "memcached":
-        ensure => present,
-    }
-}
+#class memcached {
+#    package { "memcached":
+#        ensure => present,
+#    }
+#}
 
 resources { "firewall":
     purge => true,
@@ -193,7 +187,7 @@ resources { "firewall":
 include dev-packages
 include nginx-setup
 include php-setup
-include composer
+#include composer
 include phpqatools
-include memcached
+#include memcached
 include redis

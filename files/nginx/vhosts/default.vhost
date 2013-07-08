@@ -7,26 +7,18 @@ server {
   error_log /var/log/nginx/error.log;
   access_log /var/log/nginx/access.log;
 
-  #strip app.php/ prefix if it is present
-  rewrite ^/app\.php/?(.*)$ /$1 permanent;
-
+  location ~ ^/(index|frontend_quenoestamostanmal|backoffice|backoffice_quenoestamostanmal|api|api_quenoestamostanmal|frontendnc|frontendnc_quenoestamostanmal|frontendeci|frontendeci_quenoestamostanmal|frontendocio|frontendocio_quenoestamostanmal|proveedores|proveedores_quenoestamostanmal|proveedoresocio|proveedoresocio_quenoestamostanmal)\.php$ {
+    include fastcgi_params;
+    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+    fastcgi_param PATH_INFO $fastcgi_path_info;
+    fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
+    fastcgi_param HTTPS off;
+    fastcgi_pass   127.0.0.1:9000;
+  }
+ 
   location / {
     index index.php;
-    try_files $uri @rewriteapp;
-  }
-
-  location @rewriteapp {
-    rewrite ^(.*)$ /app.php/$1 last;
-  }
-
-  # pass the PHP scripts to FastCGI server listening socket
-  location ~ \.php$ {
-    fastcgi_pass php-fpm-server;
-    #fastcgi_keep_conn on;
-    fastcgi_split_path_info ^(.+\.php)(/.*)$;
-    include fastcgi_params;
-    fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
-    fastcgi_param  HTTPS              off;
+    try_files $uri /index.php?$args;
   }
 
   # enable global phpMyAdmin
