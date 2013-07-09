@@ -3,16 +3,19 @@ Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
 
 class dev-packages {
 
-    $devPackages = [ "vim-enhanced", "curl", "git", "java-1.7.0-openjdk", "make", "diffutils", "man", "policycoreutils" ]
+    $devPackages = [ "vim-enhanced", "curl", "git", "java-1.7.0-openjdk", "make", "diffutils", "man", "policycoreutils", "nodejs", "npm" ]
     package { $devPackages:
         ensure => "installed",
     }
-}
 
-class lessc-setup {
-    package { 'less':
-      provider => npm
+    exec { 'install less using npm':
+        command => "npm install less -g",
+        require => Package['npm'],
     }
+
+    #package { 'less':
+    #  provider => npm
+    #}
 }
 
 class nginx-setup {
@@ -72,7 +75,7 @@ mysql::grant { 'ncfront':
 
 class php-setup {
 
-    $php = ["php-fpm", "php-cli", "php-devel", "php-gd", "php-mcrypt", "php-pecl-xdebug", "php-mysql", "php-pecl-memcache", "php-pecl-memcached",  "php-intl", "php-tidy", "php-imap", "php-pecl-imagick", "php-pecl-apc", "php-redis", "php-domxml-php4-php5"]
+    $php = ["php-fpm", "php-cli", "php-devel", "php-gd", "php-mcrypt", "php-pecl-xdebug", "php-mysql", "php-pecl-memcache", "php-pecl-memcached",  "php-intl", "php-tidy", "php-imap", "php-pecl-imagick", "php-pecl-apc", "php-pecl-redis", "php-domxml-php4-php5"]
 
     package { "mongodb":
         ensure => present,
@@ -197,4 +200,4 @@ include composer
 include phpqatools
 #include memcached
 include redis
-include nodejs
+#include nodejs
