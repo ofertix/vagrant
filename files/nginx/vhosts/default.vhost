@@ -1,43 +1,138 @@
-server {
-  listen 80;
+ server {
+        listen       80;
+        server_name	www.ofertix.com
+			ofertix.com
+			ofertix2
+			*.ofertixlocal.com;
+	root /vagrant/www/web;
+        charset utf-8;
 
-  server_name ofertix2 ofertix2frontend *.ofertixlocal.com *.nclocal.com ofertix2mobile ofertix2br;
-  root /vagrant/www/web;
+        #more_set_headers 'Cache-Control: no-cache';
+	access_log  /var/log/nginx/access-produccio-ofx-front.log  main;
 
-  error_log /var/log/nginx/error.log;
-  access_log /var/log/nginx/access.log;
 
-  location ~ ^/(index|frontend_quenoestamostanmal|backoffice|backoffice_quenoestamostanmal|api|api_quenoestamostanmal|frontendnc|frontendnc_quenoestamostanmal|frontendeci|frontendeci_quenoestamostanmal|frontendocio|frontendocio_quenoestamostanmal|proveedores|proveedores_quenoestamostanmal|proveedoresocio|proveedoresocio_quenoestamostanmal)\.php$ {
-    include fastcgi_params;
-    fastcgi_split_path_info ^(.+\.php)(/.+)$;
-    fastcgi_param PATH_INFO $fastcgi_path_info;
-    fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
-    fastcgi_param HTTPS off;
-    fastcgi_pass   127.0.0.1:9000;
-  }
- 
-  location / {
-    index index.php;
-    try_files $uri /index.php?$args;
-  }
+        #access_log  logs/host.access.log  main;
+	## Deny certain URI (for all)
+      	location ~* (gclid|_vti_bin|MSOffice|_vpi.xml) { 
+        	return 444;
+	}
 
-  # enable global phpMyAdmin
-  location /phpmyadmin {
-    root /usr/share/;
-    index index.php index.html index.htm;
-    location ~ ^/phpmyadmin/(.+\.php)$ {
-      try_files $uri =404;
-      root /usr/share/;
-      fastcgi_pass unix://var/run/php5-fpm.sock;
-      fastcgi_index index.php;
-      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-      include /etc/nginx/fastcgi_params;
-    }
-    location ~* ^/phpmyadmin/(.+\.(jpg|jpeg|gif|css|png|js|ico|html|xml|txt))$ {
-      root /usr/share/;
-    }
-  }
-  location /phpMyAdmin {
-    rewrite ^/* /phpmyadmin last;
-  }
-}
+	# Redirect to mantenimeinto in case.
+	#include /etc/nginx/mantenimiento.conf;
+
+        #location ~ /purge(/.*) {
+        #    allow               10.2.1.0/24;
+        #   #allow              all;
+        #    deny                all;
+        #    #slowfs_cache_purge  fastcache $1;
+        #    proxy_cache_purge   ofertix-cache   $1$is_args$args;
+        #}
+
+	#location ~* /(css/|js/|images/|swf/|favicon.ico|favicon_ocio.ico|presentacion/|fonts/) {
+	#	access_log  /var/log/nginx/access-produccio-ofx-front.log  main;
+	#	#error_log /var/log/nginx/produccio.debug01.log debug;
+	#	proxy_pass         	http://filerepo.prod.ofx:8080;
+	#	proxy_set_header	X-Real-IP  $remote_addr;
+	#	proxy_cache ofertix-cache;
+	#	proxy_buffer_size   16k;
+	#	proxy_buffers       32   16k;
+	#	proxy_busy_buffers_size 64k;
+	#	proxy_cache_key    $uri$is_args$args;	
+#	#	proxy_cache_key    "$scheme://$host$request_uri";
+	#	proxy_cache_valid 200 302 5d;
+        #        proxy_cache_valid any 5m;
+#	#	proxy_temp_path /tmp/nginx;
+	#	proxy_ignore_headers "Cache-Control" "Expires";
+
+	#}
+	
+	location ~* /(css/|js/|images/|swf/|favicon.ico|favicon_ocio.ico|presentacion/|fonts/) {
+            expires 360d;
+            add_header Cache-Control public;
+            access_log off;
+            log_not_found off;
+
+
+	}
+
+
+        location / {
+	    #slowfs_cache        fastcache;
+            #slowfs_cache_key    $uri;
+            #slowfs_cache_valid  1d;
+
+		access_log  /var/log/nginx/access-produccio-ofx-front.log  main;
+
+		index  index.php;
+                if ($http_user_agent ~* '(iPhone|iPod|android|Symbian|IEMobile|BlackBerry)') {
+                        set $mobile_request '1';
+                }
+                if ($mobile_request = '1') {
+                        rewrite ^.+ http://m.ofertix.com$uri;
+                }
+		if ($http_user_agent ~* '(iPad|ipad)') {
+			set $ipad_request '1';
+		}
+		if ($ipad_request = '1') {
+		       rewrite ^.+ http://ipad.ofertix.com$uri;
+		}
+
+
+		# If the file exists as a static file serve it directly without
+		# running all the other rewite tests on it
+		if (-f $request_filename) {
+			expires 30m; 
+			break; 
+		}
+
+		if ($request_filename ~ "\.(js|ico|gif|jpg|png|css|cur|xml|txt|xls|swf)$")
+		{
+			expires off;
+			return 404;
+		}
+
+                if ($request_filename ~ "/+microsites/.*") {
+			rewrite ^(.*) http://www.ofertix.com/escaparate last;
+			expires off;
+		}
+		if ($request_filename !~ "\.(js|ico|gif|jpg|png|css|cur|xml|txt)$") {
+			rewrite ^(.*) /index.php$1 last;
+			expires off;
+		}
+
+		location ~ "^(.+\.php)($|/)" {
+			set  $script     $uri;
+			set  $path_info  "";
+	                expires off; 
+			#access_log  /var/log/nginx/upstream-produccio-ofx-front.log  upstream;
+
+			if ($uri ~ "^(.+\.php)($|/)") {
+        	                set $script $1;
+                	}
+
+
+			if ($uri ~ "^(.+\.php)(/.+)") {
+				set  $script     $1;
+				set  $path_info  $2;
+	    		}
+	
+	    		fastcgi_pass	php-fpm-server ;
+			fastcgi_next_upstream	error ;
+    			include /etc/nginx/fastcgi_params;
+		
+    			fastcgi_param  SCRIPT_FILENAME  /vagrant/www/web$script;
+	    		fastcgi_param  PATH_INFO        $path_info;
+			fastcgi_param  SCRIPT_NAME $script;
+		}
+	}
+	location /nginx_status {
+            stub_status on;
+            access_log   off;
+            allow 127.0.0.1;
+            deny all;
+        }
+
+        #errors
+        #include /etc/nginx/staticerror_ofertix.conf;
+
+	}

@@ -138,6 +138,7 @@ class php-setup {
 
     service { "php-fpm":
         ensure => running,
+	enable => true,
         require => Package["php-fpm"],
     }
 
@@ -153,8 +154,26 @@ class redis {
     }
     service { "redis":
         ensure => running,
+        enable => true,
         require => Package["redis"],
     }
+}
+
+class prepare-project {
+    file { "/var/log/ofertix2":
+        ensure => directory,
+        owner => nobody,
+        group => nobody,
+        mode => 644,
+    }
+
+    #$enableservice = ["redis"]
+    #service { $enableservice:
+    #    ensure => running,
+    #    enable => true,
+    #    require => Package["$enableservice"],
+    #}
+
 }
 
 #class composer {
@@ -187,7 +206,6 @@ resources { "firewall":
 include dev-packages
 include nginx-setup
 include php-setup
-#include composer
 include phpqatools
-#include memcached
 include redis
+include prepare-project
