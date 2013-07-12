@@ -1,4 +1,5 @@
 .vagrant
+*~
 !www/emptydir
 www/*
 deploy_prod_ofertix
