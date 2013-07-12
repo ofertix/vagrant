@@ -145,6 +145,16 @@ class php-setup {
         require => Package[$php],
     }
 
+    file { '/etc/php.d/xdebug.ini':
+        notify => Service["php-fpm"],
+        owner  => root,
+        group  => root,
+        ensure => file,
+        mode   => 644,
+        source => '/vagrant/files/php/php.d/xdebug.ini',
+        require => Package[$php],
+    }
+
     service { "php-fpm":
         ensure => running,
         require => Package["php-fpm"],
