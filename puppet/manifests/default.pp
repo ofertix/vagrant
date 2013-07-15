@@ -66,7 +66,7 @@ mysql::grant { 'ofertix2':
 
 class php-setup {
 
-    $php = ["php-fpm", "php-cli", "php-devel", "php-gd", "php-mcrypt", "php-pecl-xdebug", "php-mysql", "php-pecl-memcache", "php-pecl-memcached",  "php-intl", "php-tidy", "php-imap", "php-pecl-imagick", "php-pecl-apc", "php-pecl-redis", "php-domxml-php4-php5"]
+    $php = ["php-fpm", "php-cli", "php-devel", "php-gd", "php-mcrypt", "php-pecl-xdebug", "php-mysql", "php-pecl-memcache", "php-pecl-memcached",  "php-intl", "php-tidy", "php-imap", "php-pecl-imagick", "php-pecl-apc", "php-pecl-redis", "php-domxml-php4-php5", "php-soap"]
 
 #    package { "mongodb":
 #        ensure => present,
