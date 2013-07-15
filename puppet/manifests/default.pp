@@ -177,6 +177,11 @@ class prepare-project {
         mode => 666,
     }
 
+    host { 'la1':
+        ip => '91.223.61.93',
+        host_aliases => [ 'la1p' ]
+    }
+
     #$enableservice = ["redis"]
     #service { $enableservice:
     #    ensure => running,
