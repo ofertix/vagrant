@@ -65,12 +65,20 @@ class { "mysql":
     root_password => 'auto',
 }
 
-mysql::grant { 'ncfront':
+mysql::grant { 'ncfront-local':
     mysql_privileges => 'ALL',
     mysql_password => 'symfony-ncfront',
     mysql_db => 'ncfront',
     mysql_user => 'symfony',
     mysql_host => 'localhost',
+}
+
+mysql::grant { 'ncfront-network':
+    mysql_privileges => 'ALL',
+    mysql_password => 'symfony-ncfront',
+    mysql_db => 'ncfront',
+    mysql_user => 'symfony',
+    mysql_host => '192.168.33.%',
 }
 
 class php-setup {
