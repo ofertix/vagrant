@@ -3,7 +3,7 @@ Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
 
 class dev-packages {
 
-    $devPackages = [ "vim-enhanced", "curl", "git", "java-1.7.0-openjdk", "make", "diffutils", "man", "policycoreutils" ]
+    $devPackages = [ "vim-enhanced", "curl", "git", "java-1.7.0-openjdk", "make", "diffutils", "man", "policycoreutils","htmldoc" ]
     package { $devPackages:
         ensure => "installed",
     }
