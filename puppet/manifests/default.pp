@@ -174,7 +174,7 @@ class prepare-project {
         ensure => directory,
         owner => nobody,
         group => nobody,
-        mode => 644,
+        mode => 666,
     }
 
     #$enableservice = ["redis"]
