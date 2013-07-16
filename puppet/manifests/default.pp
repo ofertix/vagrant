@@ -19,6 +19,24 @@ Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
 #    }
 #}
 
+class ssh-keys{
+    file { '/home/vagrant/.ssh/id_rsa.pub':
+        owner  => vagrant,
+        group  => vagrant,
+        ensure => file,
+        mode   => 644,
+        source => '/vagrant/files/ssh-keys/id_rsa.pub'
+    }
+
+    file { '/home/vagrant/.ssh/id_rsa':
+        owner  => vagrant,
+        group  => vagrant,
+        ensure => file,
+        mode   => 600,
+        source => '/vagrant/files/ssh-keys/id_rsa'
+    }
+}
+
 class dev-packages {
 
     $devPackages = [ "vim-enhanced", "curl", "git", "java-1.7.0-openjdk", "make", "diffutils", "man", "policycoreutils","htmldoc" ]
@@ -236,6 +254,7 @@ resources { "firewall":
 #}
 
 
+include ssh-keys
 #include repos
 include dev-packages
 include nginx-setup
