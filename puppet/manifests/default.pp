@@ -1,5 +1,23 @@
 Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
 
+class repos {
+    file { '/etc/pki/rpm-gpg/laigu.pubkey':
+        owner  => root,
+        group  => root,
+        ensure => file,
+        mode   => 644,
+        source => '/vagrant/files/yum/laigu.pubkey',
+    }
+
+    file { '/etc/yum.repos.d/sl6propi-php.repo':
+        owner  => root,
+        group  => root,
+        ensure => file,
+        mode   => 644,
+        source => '/vagrant/files/yum/sl6propi-php.repo',
+        require => File["/etc/pki/rpm-gpg/laigu.pubkey"],
+    }
+}
 
 class dev-packages {
 
@@ -80,6 +98,7 @@ class php-setup {
     package { $php:
         notify => Service['php-fpm'],
         ensure => latest,
+        require => File["/etc/yum.repos.d/sl6propi-php.repo"],
     }
 
     package { "apache2.2-bin":
@@ -217,7 +236,7 @@ resources { "firewall":
 #}
 
 
-
+include repos
 include dev-packages
 include nginx-setup
 include php-setup
