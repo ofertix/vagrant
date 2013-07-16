@@ -3,6 +3,8 @@
         server_name	www.ofertix.com
 			ofertix.com
 			ofertix2
+			ofertix2frontend
+			www.nclocal.com
 			*.ofertixlocal.com;
 	root /vagrant/www/web;
         charset utf-8;

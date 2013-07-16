@@ -219,6 +219,11 @@ class prepare-project {
         host_aliases => [ 'la1p' ]
     }
 
+    host { 'ofertix2':
+ 	ip => '127.0.0.1',
+        host_aliases => ['www.ofertixlocal.com','ocio.ofertixlocal.com','ofertix2frontend','ofertix2mobile','www.nclocal.com']
+    }
+
     #$enableservice = ["redis"]
     #service { $enableservice:
     #    ensure => running,
