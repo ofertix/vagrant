@@ -71,19 +71,51 @@ class nginx-setup {
         require => Package["nginx"],
     }
 
-    file { '/etc/nginx/vhost-available/default.vhost':
+    file { '/etc/nginx/vhost-available/ofertix.vhost':
         owner  => root,
         group  => root,
         ensure => file,
         mode   => 644,
-        source => '/vagrant/files/nginx/vhosts/default.vhost',
+        source => '/vagrant/files/nginx/vhosts/ofertix.vhost',
         require => File["/etc/nginx/vhost-available"],
     }
 
-    file { "/etc/nginx/vhost-enabled/default.vhost":
+    file { "/etc/nginx/vhost-enabled/ofertix.vhost":
         notify => Service["nginx"],
         ensure => link,
-        target => "/etc/nginx/vhost-available/default.vhost",
+        target => "/etc/nginx/vhost-available/ofertix.vhost",
+        require => File["/etc/nginx/vhost-enabled"],
+    }
+
+    file { '/etc/nginx/vhost-available/ocio.vhost':
+        owner  => root,
+        group  => root,
+        ensure => file,
+        mode   => 644,
+        source => '/vagrant/files/nginx/vhosts/ocio.vhost',
+        require => File["/etc/nginx/vhost-available"],
+    }
+
+    file { "/etc/nginx/vhost-enabled/ocio.vhost":
+        notify => Service["nginx"],
+        ensure => link,
+        target => "/etc/nginx/vhost-available/ocio.vhost",
+        require => File["/etc/nginx/vhost-enabled"],
+    }
+
+    file { '/etc/nginx/vhost-available/nc.vhost':
+        owner  => root,
+        group  => root,
+        ensure => file,
+        mode   => 644,
+        source => '/vagrant/files/nginx/vhosts/nc.vhost',
+        require => File["/etc/nginx/vhost-available"],
+    }
+
+    file { "/etc/nginx/vhost-enabled/nc.vhost":
+        notify => Service["nginx"],
+        ensure => link,
+        target => "/etc/nginx/vhost-available/nc.vhost",
         require => File["/etc/nginx/vhost-enabled"],
     }
 }

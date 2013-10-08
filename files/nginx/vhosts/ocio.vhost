@@ -1,11 +1,6 @@
  server {
         listen       80;
-        server_name	www.ofertix.com
-			ofertix.com
-			ofertix2
-			ofertix2frontend
-			www.nclocal.com
-			*.ofertixlocal.com;
+        server_name	ocio.ofertixlocal.com;
 	root /vagrant/www/web;
         charset utf-8;
 
@@ -65,7 +60,7 @@
 
 		access_log  /var/log/nginx/access-produccio-ofx-front.log  main;
 
-		index  index.php;
+		index  frontendocio.php;
                 if ($http_user_agent ~* '(iPhone|iPod|android|Symbian|IEMobile|BlackBerry)') {
                         set $mobile_request '1';
                 }
